@@ -1,0 +1,49 @@
+ 
+CREATE TABLE Group
+(
+groupId int NOT NULL,
+PRIMARY KEY(groupId),
+);
+
+CREATE TABLE Company
+(
+companyId int NOT NULL,
+_addressId int,
+PRIMARY KEY (companyId),
+);
+CREATE TABLE groupHasCompany
+(
+id int NOT NULL,
+_companyId int NOT NULL,
+_groupId int NOT NULL,
+PRIMARY KEY (id),
+foreign key (_companyId) references Company(companyId),
+foreign key (_groupId) references Group(groupId),
+);
+
+CREATE TABLE structure
+(
+id int NOT NULL,
+structured int NOT NULL,
+by int NOT NULL,
+PRIMARY KEY (id),
+foreign key (structured) references Company(companyId),
+foreign key (by) references Company(companyId),
+);
+
+CREATE TABLE Plant
+(
+plantId int NOT NULL,
+_companyId int NOT NULL,
+PRIMARY KEY (plantId),
+foreign key (_companyId) references Company(companyId),
+
+);
+
+CREATE TABLE Item
+(
+itemId int NOT NULL,
+PRIMARY KEY (itemId),
+_plantId int NOT NULL,
+foreign key (_plantId) references Plant(plantId),
+);

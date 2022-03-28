@@ -1,0 +1,86 @@
+ 
+CREATE TABLE ShippingAddresses
+(
+addressId int NOT NULL,
+houseNumber int,
+street char(50),
+district char(50),
+city char(50),
+PRIMARY KEY(addressId),
+);
+
+CREATE TABLE Customer
+(
+clientId int NOT NULL,
+
+balance int,
+creditLimit int,
+discount int,
+_addressId int,
+PRIMARY KEY (clientId),
+FOREIGN KEY (_addressId) REFERENCES ShippingAddresses(addressId),
+);
+CREATE TABLE has
+(
+id int NOT NULL,
+
+_addressId int NOT NULL,
+_clientId int NOT NULL,
+PRIMARY KEY (id),
+foreign key (_addressId) references ShippingAddresses(addressId),
+foreign key (_clientId) references Customer(clientId),
+);
+CREATE TABLE Order
+(
+orderId int NOT NULL,
+
+date TIMESTAMP,
+_addressId int,
+_clientId int NOT NULL,
+PRIMARY KEY (orderId),
+foreign key (_clientId) references Customer(clientId),
+foreign key (_addressId) references ShippingAddresses(addressId),
+
+);
+
+CREATE TABLE Item
+(
+itemId int NOT NULL,
+
+description char(50),
+PRIMARY KEY (itemId),
+);
+
+CREATE TABLE includes
+(
+id int NOT NULL,
+
+_orderId int NOT NULL,
+_itemId int NOT NULL,
+quantity int NOT NULL,
+PRIMARY KEY (id),
+foreign key (_orderId) references Order(orderId),
+foreign key (_itemId) references Item(itemId),
+);
+
+
+CREATE TABLE Manufacturer
+(
+manufacturerId int NOT NULL,
+
+phoneNumber char(12),
+PRIMARY KEY(manufacturerId),
+);
+
+
+CREATE TABLE produce
+(
+id int NOT NULL,
+
+_manufacturerId int NOT NULL,
+_itemId int NOT NULL,
+quantity int,
+PRIMARY KEY (id),
+foreign key (_manufacturerId) references Manufacturer(manufactorerId),
+foreign key (_itemId) references Item(itemId),
+);
