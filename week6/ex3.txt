@@ -1,0 +1,16 @@
+ 
+SELECT DISTINCT Students.sname
+FROM Students, Registration
+WHERE Registration.sid=Student.sid AND Registration.cid=107 AND Registration.percent >= 0.9;
+
+
+SELECT count(DISTINCT Students.sid)
+FROM Students
+WHERE 0.75 <= (
+SELECT MIN(Registrion.percent) FROM Registration, Students WHERE sid = Registration.sid);
+
+
+SELECT DISTINCT Students.sid
+FROM Students
+WHERE 2 >= (
+SELECT COUNT(Registrion.cid) FROM Registration, Students WHERE sid = Registration.sid) GROUP BY sid;

@@ -1,0 +1,13 @@
+ 
+SELECT Author.*, Book.*
+FROM Author, Book
+WHERE Author.author_id=Book.editor;
+
+
+SELECT DISTINCT first_name, last_name
+FROM (
+(SELECT DISTINCT author_id from Author) EXCEPT (SELECT DISTINCT author_id from Author, Book where editor=author_id)
+);
+
+
+(SELECT author_id from Author) EXCEPT (Select editor FROM Book);
