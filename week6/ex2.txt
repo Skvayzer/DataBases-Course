@@ -1,13 +1,13 @@
- 
-SELECT Author.*, Book.*
-FROM Author, Book
-WHERE Author.author_id=Book.editor;
+-- 1.
+SELECT *
+FROM Author
+JOIN Book ON author_id=editor;
 
+-- 2.
+SELECT DISTINCT Author.first_name, Author.last_name
+FROM
+((SELECT DISTINCT author_id from Author) EXCEPT (SELECT DISTINCT editor FROM Book)) AS nonEditors
+RIGHT JOIN Author ON nonEditors.author_id=Author.author_id;
 
-SELECT DISTINCT first_name, last_name
-FROM (
-(SELECT DISTINCT author_id from Author) EXCEPT (SELECT DISTINCT author_id from Author, Book where editor=author_id)
-);
-
-
-(SELECT author_id from Author) EXCEPT (Select editor FROM Book);
+-- 3.
+(SELECT DISTINCT author_id from Author) EXCEPT (SELECT DISTINCT editor FROM Book)

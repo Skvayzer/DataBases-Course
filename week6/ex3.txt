@@ -1,16 +1,19 @@
- 
-SELECT DISTINCT Students.sname
-FROM Students, Registration
-WHERE Registration.sid=Student.sid AND Registration.cid=107 AND Registration.percent >= 0.9;
+-- 1.
+SELECT DISTINCT S.sname
+FROM Students AS S, Registration as R
+WHERE R.sid=S.sid AND R.cid=107 AND R.percent >= 0.9;
 
-
-SELECT count(DISTINCT Students.sid)
-FROM Students
+-- 2.
+SELECT count(*)
+FROM
+(SELECT DISTINCT S.sid
+FROM Students AS S
 WHERE 0.75 <= (
-SELECT MIN(Registrion.percent) FROM Registration, Students WHERE sid = Registration.sid);
+SELECT MIN(percent) FROM Registration WHERE S.sid = Registration.sid)
+);
 
-
-SELECT DISTINCT Students.sid
+-- 3.
+SELECT DISTINCT sid
 FROM Students
 WHERE 2 >= (
-SELECT COUNT(Registrion.cid) FROM Registration, Students WHERE sid = Registration.sid) GROUP BY sid;
+SELECT COUNT(cid) FROM Registration WHERE sid = Registration.sid GROUP BY sid);
