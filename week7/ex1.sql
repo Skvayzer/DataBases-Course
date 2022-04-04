@@ -49,7 +49,7 @@ VALUES (3786, 'Net', 35),
 ON CONFLICT DO NOTHING;
 
 INSERT INTO Catalog
-VALUES (1, 1, 10),
+VALUES (1, 2, 10),
        (1, 2, 20),
        (1, 3, 30),
        (1, 4, 40),

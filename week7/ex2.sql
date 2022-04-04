@@ -78,7 +78,7 @@ VALUES (1, 'LISP', 1),
 ON CONFLICT DO NOTHING;
 
 INSERT INTO AuthorPub
-VALUES (1, 1, 1),
+VALUES (1, 2, 1),
        (2, 2, 1),
        (3, 2, 2),
        (4, 3, 1),
