@@ -1,100 +1,105 @@
-CREATE TABLE IF NOT EXISTS Course
-(
-    courseId  integer PRIMARY KEY,
-    courseName text NOT NULL,
-    grade integer NOT NULL,
 
+
+CREATE TABLE IF NOT EXISTS Publisher (
+    id serial NOT NULL PRIMARY KEY,
+    name text NOT NULL
+);
+CREATE TABLE IF NOT EXISTS Book (
+    id serial NOT NULL PRIMARY KEY,
+    name text NOT NULL,
+  	publisherId integer NOT NULL,
+    FOREIGN KEY (publisherId) REFERENCES Publisher(id)
+);
+CREATE TABLE IF NOT EXISTS School (
+    id serial NOT NULL PRIMARY KEY,
+    name text NOT NULL
+);
+CREATE TABLE IF NOT EXISTS Room (
+    id serial NOT NULL PRIMARY KEY,
+    name text NOT NULL
+);
+CREATE TABLE IF NOT EXISTS Teacher (
+    id serial NOT NULL PRIMARY KEY,
+    name text NOT NULL,
+    schoolId integer NOT NULL REFERENCES school(id),
+    roomId integer NOT NULL REFERENCES room(id),
+    grade smallint NOT NULL
+);
+CREATE TABLE IF NOT EXISTS Course (
+    id serial NOT NULL PRIMARY KEY,
+    name text NOT NULL
+);
+CREATE TABLE IF NOT EXISTS Loan (
+    id serial NOT NULL PRIMARY KEY,
+    teacherId integer NOT NULL REFERENCES teacher(id),
+    courseId integer NOT NULL REFERENCES course(id),
+    bookId integer NOT NULL REFERENCES book(id),
+    loanDate date NOT NULL
 );
 
-
-CREATE TABLE IF NOT EXISTS StudyPeriod
-(
-    studyPeriodId  integer PRIMARY KEY,
-    courseId   integer    NOT NULL,
-    teacherId integer NOU NULL,
-    bookId integer NOT NULL,
-    room text NOT NULL,
-
-    FOREIGN KEY (book_id) REFERENCES Book (book_id)
-);
-
-CREATE TABLE IF NOT EXISTS Teacher
-(
-    teacherId    integer PRIMARY KEY,
-    teacherName text    NOT NULL,
-    schoolName text NOT NULL,
-
-);
-
-CREATE TABLE IF NOT EXISTS Book
-(
-    bookId    integer PRIMARY KEY,
-    bookName text    NOT NULL,
-    publisher text NOT NULL,
-    loanDate date NOT NULL,
-
-
-);
-/*
-CREATE TABLE IF NOT EXISTS AuthorPub
-(
-    author_id       integer NOT NULL,
-    pub_id          integer NOT NULL,
-    author_position text    NOT NULL,
-    FOREIGN KEY (author_id) REFERENCES Author (author_id),
-    FOREIGN KEY (pub_id) REFERENCES Pub (pub_id)
-);*/
-
-INSERT INTO Course
-VALUES (1, 'Logical thinking', 1),
-       (2, 'Wrtting', 1),
-       (3, 'Numerical Thinking', 1),
-       (4, 'Claude', 'Shannon'),
-       (5, 'Alan', 'Turing'),
-       (6, 'Alonzo', 'Church'),
-       (7, 'Perry', 'White'),
-       (8, 'Moshe', 'Vardi'),
-       (9, 'Roy', 'Batty')
-ON CONFLICT DO NOTHING;
-
-INSERT INTO Book
-VALUES (1, 'CACM', 'April', 1960, 8),
-       (2, 'CACM', 'July', 1974, 8),
-       (3, 'BTS', 'July', 1948, 2),
-       (4, 'MLS', 'November', 1936, 7),
-       (5, 'Mind', 'October', 1950, null),
-       (6, 'AMS', 'Month', 1941, null),
-       (7, 'AAAI', 'July', 2012, 9),
-       (8, 'NIPS', 'July', 2012, 9)
-ON CONFLICT DO NOTHING;
-
-INSERT INTO Pub
-VALUES (1, 'LISP', 1),
-       (2, 'Unix', 2),
-       (3, 'Info Theory', 3),
-       (4, 'Turing Machines', 4),
-       (5, 'Turing Test', 5),
-       (6, 'Lambda Calculus', 6)
-ON CONFLICT DO NOTHING;
-
-INSERT INTO AuthorPub
-VALUES (1, 2, 1),
-       (2, 2, 1),
-       (3, 2, 2),
-       (4, 3, 1),
-       (5, 4, 1),
-       (5, 5, 1),
-       (6, 6, 1)
-ON CONFLICT DO NOTHING;
+INSERT INTO Publisher (name)
+VALUES ('BOA Editions'),
+    ('Taylor & Francis Publishing'),
+    ('Prentice Hall'),
+    ('McGraw Hill');
+INSERT INTO Book (name, publisherId)
+VALUES ('Learning and teaching in early childhood', 1),
+    ('Preschool,N56', 2),
+    ('Early Childhood Education N9', 3),
+    ('Know how to educate: guide for Parents', 4);
+INSERT INTO School (name)
+VALUES ('Horizon Education Institute'),
+    ('Bright Institution');
+INSERT INTO Room (name)
+VALUES ('1.A01'),
+    ('1.B01'),
+    ('2.B01');
+INSERT INTO Teacher (name, schoolId, roomId, grade)
+VALUES ('Chad Russell', 1, 1, 1),
+    ('E.F.Codd', 1, 2, 1),
+    ('Jones Smith', 1, 1, 2),
+    ('Adam Baker', 2, 3, 1);
+INSERT INTO Course (name)
+VALUES ('Logical thinking'),
+    ('Wrtting'),
+    ('Numerical Thinking'),
+    ('Spatial, Temporal and Causal Thinking'),
+    ('English');
+INSERT INTO Loan (teacherId, courseId, bookId, loanDate)
+VALUES (1, 1, 1, TO_DATE('09/09/2010','DD/MM/YYYY')),
+    (1, 2, 2, TO_DATE('05/05/2010','DD/MM/YYYY')),
+    (1, 3, 1, TO_DATE('05/05/2010','DD/MM/YYYY')),
+    (2, 4, 3, TO_DATE('06/05/2010','DD/MM/YYYY')),
+    (2, 3, 1, TO_DATE('06/05/2010','DD/MM/YYYY')),
+    (3, 2, 1, TO_DATE('09/09/2010','DD/MM/YYYY')),
+    (3, 5, 4, TO_DATE('05/05/2010','DD/MM/YYYY')),
+    (4, 1, 4, TO_DATE('05/05/2010','DD/MM/YYYY')),
+    (4, 3, 1, TO_DATE('05/05/2010','DD/MM/YYYY'));
 
 
--- Obtain for each of the schools, the number of books that have been loaned to each publishers.
-SELECT schoolName, publisher, COUNT(bookId)
-FROM StudyPeriod, Book, Teacher
-GROUP BY publisher
+--Obtain for each of the schools, the number of books that have been loaned to each publishers.
+SELECT s.name AS School,
+    p.name AS Publisher,
+    COUNT(*)
+FROM Loan as l, Teacher as t, School as s, Book as b, Publisher as p
+	Where t.id = l.teacherId And s.id = t.schoolId and b.id = l.bookId and p.id = b.publisherId
+GROUP BY (s.id, p.id);
 
--- For each school, find the book that has been on loan the longest and the teacher in charge of it.
-SELECT
 
-
-
+-- For each school, find the books that have been on loan the longest and the teacher in charge of it.
+SELECT s.name AS school,
+    b.name AS book,
+    t.name AS teacher
+FROM Loan as l
+    JOIN Teacher AS t ON t.id = l.teacherId
+    JOIN School AS s ON s.id = t.schoolId
+    JOIN Book AS b ON b.id = l.bookId
+    JOIN Publisher AS p ON p.id = b.publisherId
+    JOIN (
+        SELECT s.id,
+            MIN(l.loanDate)
+        FROM Loan as l, Teacher as t, School as s
+            where t.id = l.teacherId and s.id = t.schoolId
+        GROUP BY s.id
+    ) AS m ON m.id = s.id
+WHERE l.loanDate = m.min;

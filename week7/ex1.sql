@@ -1,11 +1,18 @@
-CREATE TABLE IF NOT EXISTS Order
+
+CREATE TABLE IF NOT EXISTS Customer
+(
+    customerId  integer NOT NULL PRIMARY KEY,
+    customerName text NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS Orders
 (
     orderId     integer PRIMARY KEY,
-    date        text NOT NULL,
-    city         text NOT NULL,
     customerId  integer NOT NULL,
+    date        date NOT NULL,
+    city         text NOT NULL,
     --containerId   integer  NOT NULL,
-    FOREIGN KEY (customerId) REFERENCES Customer (customerId),
+    FOREIGN KEY (customerId) REFERENCES Customer (customerId)
     --FOREIGN KEY (containerId) REFERENCES Contains (containerId)
 );
 
@@ -13,64 +20,66 @@ CREATE TABLE IF NOT EXISTS Item
 (
     itemId   integer PRIMARY KEY,
     itemName text NOT NULL,
-    price real NOT NULL,
+    price real NOT NULL
 );
 
-
-
-CREATE TABLE IF NOT EXISTS Customer
-(
-    customerId  integer NOT NULL PRIMARY KEY,
-    customerName text NOT NULL,
-);
-
-CREATE TABLE IF NOT EXISTS Contains
+CREATE TABLE IF NOT EXISTS Container
 (
     containerId  integer PRIMARY KEY,
-    orderId integer NOUT NULL,
+    orderId integer NOT NULL,
     itemId  integer NOT NULL,
     quant integer NOT NULL,
     FOREIGN KEY (itemId) REFERENCES Item (itemId),
-    FOREIGN KEY (orderId) REFERENCES Order (orderId),
+    FOREIGN KEY (orderId) REFERENCES Orders (orderId)
 
 );
+INSERT INTO Customer
+VALUES (101, 'Martin'),
+	   (107, 'Herman'),
+       (110, 'Pedro')
+ON CONFLICT DO NOTHING;
 
-INSERT INTO Order
-VALUES (2031, '23/02/2011', '101', 'Prague'),
-       (2302, '25/02/2011', '107', 'Madrid'),
-       (2303, '27/02/2011', '110', 'Moscow'),
-
+INSERT INTO Orders
+VALUES (2301, 101, TO_DATE('23/02/2011','DD/MM/YYYY'), 'Prague'),
+       (2302, 107, TO_DATE('25/02/2011','DD/MM/YYYY'), 'Madrid'),
+       (2303, 110, TO_DATE('27/02/2011','DD/MM/YYYY'), 'Moscow')
 ON CONFLICT DO NOTHING;
 
 INSERT INTO Item
 VALUES (3786, 'Net', 35),
        (4011, 'Racket', 65),
-       (3896, 'Elmer',10)
+       (9132, 'Pack-3', 4.75),
+       (5794, 'Pack -6', 5),
+       (3141, 'Cover', 10)
 ON CONFLICT DO NOTHING;
 
-INSERT INTO Catalog
-VALUES (1, 2, 10),
-       (1, 2, 20),
-       (1, 3, 30),
-       (1, 4, 40),
-       (1, 5, 50),
-       (2, 1, 9),
-       (2, 3, 34),
-       (2, 5, 48)
+
+
+INSERT INTO Container
+VALUES (1, 2301, 3786, 3),
+       (2, 2301, 4011, 6),
+       (3, 2301, 9132, 8),
+       (4, 2302, 5794, 4),
+       (5, 2303, 4011, 2),
+       (6, 2303, 3141, 2)
 ON CONFLICT DO NOTHING;
 
 
 -- Calculate the total number of items per order and the total amount to pay for the order.
-SELECT SUM(quant), SUM(price*quant)
-FROM Constains, Item
-GROUP BY orderId
+SELECT orderId, SUM(quant) as quant, SUM(price*quant) as payment
+FROM Container, Item
+WHERE Container.itemId=Item.itemId
+GROUP BY orderId;
+
+
 
 -- Obtain the customer whose purchase in terms of money has been greater than the others
-SELECT customerId
-FROM MAX(
-SELECT SUM(price*quant)
-FROM Constains, Item, Order
+SELECT customerId, SUM(price*quant) AS purchase
+FROM Container, Item, Orders
+WHERE Container.itemId=Item.itemId AND Container.orderId=Orders.orderId
 GROUP BY customerId
-)
+ORDER BY purchase DESC
+LIMIT 1
+
 
 
