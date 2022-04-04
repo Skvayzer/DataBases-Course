@@ -97,25 +97,4 @@ GROUP BY publisher
 SELECT
 
 
--- 1.
-SELECT *
-FROM Author
-         JOIN Book ON author_id = editor;
 
--- 2.
-SELECT first_name, last_name
-FROM (
-      (SELECT author_id
-       FROM Author
-       EXCEPT
-       SELECT editor
-       FROM Book) as A_except_E
-         JOIN Author on A_except_E.author_id = Author.author_id
-    );
-
--- 3.
-SELECT author_id
-FROM Author
-EXCEPT
-SELECT editor
-FROM Book

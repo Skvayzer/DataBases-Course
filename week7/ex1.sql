@@ -45,7 +45,7 @@ ON CONFLICT DO NOTHING;
 INSERT INTO Item
 VALUES (3786, 'Net', 35),
        (4011, 'Racket', 65),
-       (3, 'Elmer Fudd', 'Carrot Patch, MN')
+       (3896, 'Elmer',10)
 ON CONFLICT DO NOTHING;
 
 INSERT INTO Catalog
