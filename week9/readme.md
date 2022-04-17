@@ -9,5 +9,5 @@
  ## The output of the sql function
  ![alt text](https://github.com/Skvayzer/DataBases-Course/blob/master/week9/images/ex2.png)
  ## The error
- ![alt text](https://github.com/Skvayzer/DataBases-Course/blob/master/week9/images/ex2(2).png)
+ ![alt text](https://github.com/Skvayzer/DataBases-Course/blob/master/week9/images/ex2-error.png)
 
